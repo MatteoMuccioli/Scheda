@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Scheda Ibrida Matteo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: barra giorni fissa in alto, una sezione per volta, righe esercizio spuntabili */
+:root{
+  --bg:#eef1f3; --surface:#ffffff; --ink:#15202b; --muted:#5b6873; --line:#d6dde2;
+  --lift:#1f5f8b; --lift-soft:#dceaf4; --run:#c2501a; --run-soft:#f8e4d8;
+  --done:#2e7d4f; --done-soft:#dff0e5;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f151a; --surface:#18212a; --ink:#e6ecf0; --muted:#94a3ae; --line:#2a3742;
+  --lift:#6fb0de; --lift-soft:#1c3346; --run:#f08a52; --run-soft:#3d2518;
+  --done:#6cc792; --done-soft:#1b3427; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f151a; --surface:#18212a; --ink:#e6ecf0; --muted:#94a3ae; --line:#2a3742;
+  --lift:#6fb0de; --lift-soft:#1c3346; --run:#f08a52; --run-soft:#3d2518;
+  --done:#6cc792; --done-soft:#1b3427; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45;margin:0}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px 48px}
+header.top{padding-block:20px 8px}
+h1{font-family:var(--display);font-weight:800;font-size:2.1rem;letter-spacing:.01em;margin:0;line-height:1;text-transform:uppercase}
+.sub{color:var(--muted);margin:6px 0 0;font-size:.95rem}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;margin:0 -16px;padding-inline:16px;border-bottom:1px solid var(--line)}
+.tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;font-family:var(--display);font-weight:700;font-size:1rem;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:7px 12px;border-radius:6px;cursor:pointer}
+.tab small{display:block;font-family:var(--body);font-weight:600;font-size:.68rem;letter-spacing:0;text-transform:none;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tab[aria-selected="true"] small{color:var(--bg);opacity:.8}
+.tab:focus-visible,.ex:focus-visible,button:focus-visible{outline:2px solid var(--lift);outline-offset:2px}
+section{padding-top:18px}
+.dayhead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h2{font-family:var(--display);font-weight:800;font-size:1.8rem;text-transform:uppercase;margin:0;line-height:1.05;text-wrap:balance}
+.kind{font-family:var(--display);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:.85rem;padding:2px 8px;border-radius:4px}
+.kind.lift{background:var(--lift-soft);color:var(--lift)}
+.kind.run{background:var(--run-soft);color:var(--run)}
+.vol{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px}
+.vol span{font-size:.85rem;border:1px solid var(--line);border-radius:4px;padding:2px 8px;color:var(--muted);font-variant-numeric:tabular-nums}
+.vol b{color:var(--ink)}
+h3{font-family:var(--display);font-weight:700;font-size:1.15rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:22px 0 8px;display:flex;justify-content:space-between;gap:8px}
+h3 em{font-style:normal;font-family:var(--body);font-size:.85rem;letter-spacing:0;text-transform:none}
+.list{display:grid;gap:8px}
+.ex{display:grid;grid-template-columns:28px 1fr auto;gap:4px 10px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;cursor:pointer;text-align:left;width:100%;color:var(--ink);font:inherit}
+.box{width:22px;height:22px;border:2px solid var(--line);border-radius:5px;margin-top:2px;display:grid;place-items:center;font-size:.85rem;color:transparent}
+.ex .name{font-weight:700;min-width:0}
+.ex .sr{font-family:var(--display);font-weight:700;font-size:1.25rem;font-variant-numeric:tabular-nums;white-space:nowrap;line-height:1.1}
+.ex .meta{grid-column:2 / 4;font-size:.9rem;color:var(--muted);min-width:0}
+.ex .meta b{color:var(--ink);font-weight:600}
+.ex.done{background:var(--done-soft);border-color:var(--done)}
+.ex.done .box{background:var(--done);border-color:var(--done);color:var(--surface)}
+.ex.done .name{text-decoration:line-through;text-decoration-color:var(--done)}
+.note{background:var(--surface);border-left:3px solid var(--lift);padding:10px 12px;border-radius:0 6px 6px 0;font-size:.95rem;margin:12px 0 0}
+.note.run{border-left-color:var(--run)}
+.note p{margin:0}.note p+p{margin-top:6px}
+.reset{margin-top:16px;background:none;border:1px solid var(--line);color:var(--muted);padding:8px 12px;border-radius:6px;font:inherit;font-size:.9rem;cursor:pointer}
+.tablewrap{overflow-x:auto;margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:.93rem;font-variant-numeric:tabular-nums;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-family:var(--display);font-weight:700;letter-spacing:.05em;text-transform:uppercase;font-size:.85rem;color:var(--muted)}
+tr:last-child td{border-bottom:0}
+.deload td{color:var(--muted)}
+ul.plain{margin:6px 0 0;padding-left:18px}ul.plain li+li{margin-top:4px}
+.grid2{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;min-width:0}
+.card h4{margin:0 0 4px;font-family:var(--display);font-size:1.1rem;text-transform:uppercase;letter-spacing:.04em}
+.card p{margin:0;font-size:.93rem;color:var(--muted)}
+.card p b{color:var(--ink)}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;padding:1px 6px;border-radius:3px;margin-left:4px;vertical-align:middle}
+.tag.si{background:var(--done-soft);color:var(--done)}
+.tag.opt{background:var(--lift-soft);color:var(--lift)}
+.tag.no{background:var(--run-soft);color:var(--run)}
+.calc{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;margin-top:8px}
+.calc label{font-weight:600}
+.calc input{width:80px;font:inherit;font-size:1.1rem;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font-variant-numeric:tabular-nums}
+.fine{color:var(--muted);font-size:.85rem;margin-top:28px}
+@media (prefers-reduced-motion:no-preference){.ex{transition:background .15s,border-color .15s}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header class="top">
+  <h1>Scheda Ibrida</h1>
+  <p class="sub">Fisico asciutto e muscoloso · max 10 serie per gruppo muscolare a seduta · tocca un esercizio per spuntarlo</p>
+</header>
+
+<nav aria-label="Giorni">
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" data-t="g1" id="tab-g1">G1<small>Spinta+Bici</small></button>
+    <button class="tab" role="tab" data-t="g2" id="tab-g2">G2<small>Long run</small></button>
+    <button class="tab" role="tab" data-t="g3" id="tab-g3">G3<small>Schiena+Trici</small></button>
+    <button class="tab" role="tab" data-t="g4" id="tab-g4">G4<small>Run forte</small></button>
+    <button class="tab" role="tab" data-t="g5" id="tab-g5">G5<small>Gambe</small></button>
+    <button class="tab" role="tab" data-t="g6" id="tab-g6">G6<small>Hyrox</small></button>
+    <button class="tab" role="tab" data-t="g7" id="tab-g7">G7<small>Recupero</small></button>
+    <button class="tab" role="tab" data-t="food" id="tab-food">Cibo<small>& integratori</small></button>
+    <button class="tab" role="tab" data-t="rules" id="tab-rules">Regole<small>progressione</small></button>
+  </div>
+</nav>
+
+<!-- G1 -->
+<section id="g1" role="tabpanel">
+  <div class="dayhead"><h2>Petto · Spalle · Bicipiti</h2><span class="kind lift">Sala</span></div>
+  <div class="vol"><span>Petto <b>10</b></span><span>Spalle <b>10</b></span><span>Bicipiti <b>6</b></span><span>Totale <b>26 serie</b></span></div>
+
+  <h3>Petto <em>10 serie</em></h3>
+  <div class="list">
+    <button class="ex"><span class="box">✓</span><span class="name">Panca piana bilanciere</span><span class="sr">4×6-8</span><span class="meta">Rec <b>2'</b> · scapole addotte, piedi a terra, bilanciere a metà sterno</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Panca inclinata manubri 30°</span><span class="sr">3×8-10</span><span class="meta">Rec <b>90"</b> · lavora l'alto petto, discesa controllata 2-3"</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Croci ai cavi — altezza media</span><span class="sr">3×12-15</span><span class="meta">Rec <b>60"</b> · carrucole all'altezza del petto, gomiti leggermente flessi, chiudi davanti allo sterno e tieni 1". L'alto petto è già coperto dall'inclinata.</span></button>
+  </div>
+
+  <h3>Spalle <em>10 serie</em></h3>
+  <div class="list">
+    <button class="ex"><span class="box">✓</span><span class="name">Military press bilanciere in piedi</span><span class="sr">3×6-8</span><span class="meta">Rec <b>2'</b> · glutei e addome contratti, niente iperestensione lombare</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Alzate laterali manubri</span><span class="sr">4×12-15</span><span class="meta">Rec <b>60"</b> · peso leggero, sali fino all'altezza spalle, gomito guida</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Face pull alla corda</span><span class="sr">3×15</span><span class="meta">Rec <b>60"</b> · cavo all'altezza degli occhi, tira verso la fronte aprendo le mani</span></button>
+  </div>
+
+  <h3>Bicipiti <em>6 serie</em></h3>
+  <div class="list">
+    <button class="ex"><span class="box">✓</span><span class="name">Curl bilanciere EZ</span><span class="sr">3×8-10</span><span class="meta">Rec <b>75"</b> · gomiti fermi ai fianchi, niente slancio</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Curl a martello</span><span class="sr">3×10-12</span><span class="meta">Rec <b>60"</b> · presa neutra, lavora brachiale e avambraccio</span></button>
+  </div>
+  <button class="reset" data-reset="g1">Azzera spunte di oggi</button>
+</section>
+
+<!-- G2 -->
+<section id="g2" role="tabpanel" hidden>
+  <div class="dayhead"><h2>Long run + Addominali</h2><span class="kind run">Corsa</span></div>
+  <div class="note run"><p><b>Zona 2</b>: 65-75% della FC max, ritmo a cui riesci a parlare in frasi complete. Se il fiato sale, rallenta: qui conta il volume, non la velocità.</p></div>
+
+  <h3>Progressione km <em>ciclo di 8 settimane</em></h3>
+  <div class="tablewrap"><table>
+    <tr><th>Sett.</th><th>Km</th><th>Note</th></tr>
+    <tr><td>1</td><td>10</td><td>Base</td></tr>
+    <tr><td>2</td><td>12</td><td></td></tr>
+    <tr><td>3</td><td>14</td><td></td></tr>
+    <tr class="deload"><td>4</td><td>10</td><td>Scarico</td></tr>
+    <tr><td>5</td><td>14</td><td></td></tr>
+    <tr><td>6</td><td>16</td><td></td></tr>
+    <tr><td>7</td><td>18</td><td>Picco</td></tr>
+    <tr class="deload"><td>8</td><td>12</td><td>Scarico, poi riparti da 12</td></tr>
+  </table></div>
+  <div class="note run"><p>Oltre i 75' porta <b>30-60 g di carboidrati all'ora</b> (gel, datteri, bevanda) e acqua con sali.</p></div>
+
+  <h3>Core dopo la corsa <em>3 giri</em></h3>
+  <div class="list">
+    <button class="ex"><span class="box">✓</span><span class="name">Plank</span><span class="sr">3×45-60"</span><span class="meta">Corpo in linea, glutei contratti</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Dead bug</span><span class="sr">3×10/lato</span><span class="meta">Zona lombare sempre schiacciata a terra</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Hollow hold</span><span class="sr">3×30"</span><span class="meta">Se troppo duro, ginocchia piegate</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Side plank</span><span class="sr">3×30"/lato</span><span class="meta">Anche alte, non lasciarle cadere</span></button>
+  </div>
+  <button class="reset" data-reset="g2">Azzera spunte di oggi</button>
+</section>
+
+<!-- G3 -->
+<section id="g3" role="tabpanel" hidden>
+  <div class="dayhead"><h2>Schiena · Tricipiti</h2><span class="kind lift">Sala</span></div>
+  <div class="vol"><span>Schiena <b>10</b></span><span>Tricipiti <b>9</b></span><span>Totale <b>19 serie</b></span></div>
+
+  <h3>Schiena <em>10 serie</em></h3>
+  <div class="list">
+    <button class="ex"><span class="box">✓</span><span class="name">Trazioni presa prona</span><span class="sr">4×6-8</span><span class="meta">Rec <b>2'</b> · presa poco più larga delle spalle; se fai più di 10, aggiungi zavorra</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Rematore bilanciere — presa prona</span><span class="sr">3×8</span><span class="meta">Rec <b>2'</b> · palmi verso di te, mani poco più larghe delle spalle, busto a 45°, tira all'ombelico. Prona = più dorsali alti e romboidi, che danno la schiena "a V" ampia.</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Pulley basso con triangolo</span><span class="sr">3×10-12</span><span class="meta">Rec <b>75"</b> · busto fermo, scapole indietro a fine tirata</span></button>
+  </div>
+
+  <h3>Tricipiti <em>9 serie</em></h3>
+  <div class="list">
+    <button class="ex"><span class="box">✓</span><span class="name">Panca stretta</span><span class="sr">3×6-8</span><span class="meta">Rec <b>2'</b> · mani alla larghezza spalle, gomiti vicini al corpo</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">French press manubri</span><span class="sr">3×10-12</span><span class="meta">Rec <b>75"</b> · gomiti puntati al soffitto, scendi dietro la testa</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Push down alla corda</span><span class="sr">3×12-15</span><span class="meta">Rec <b>60"</b> · apri la corda in basso, gomiti fermi</span></button>
+  </div>
+  <button class="reset" data-reset="g3">Azzera spunte di oggi</button>
+</section>
+
+<!-- G4 -->
+<section id="g4" role="tabpanel" hidden>
+  <div class="dayhead"><h2>Run forte 5 km + Addominali</h2><span class="kind run">Corsa</span></div>
+  <p class="sub">Alterna A e B ogni settimana.</p>
+  <div class="grid2" style="margin-top:10px">
+    <div class="card"><h4>A · Tempo run</h4><p><b>1 km</b> riscaldamento facile<br><b>5 km</b> a ritmo soglia (80-88% FC max, parli a mezze frasi)<br><b>1 km</b> defaticamento</p></div>
+    <div class="card"><h4>B · Intervalli</h4><p><b>1,5 km</b> riscaldamento + 3 allunghi<br><b>5 × 1000 m</b> a ritmo 10 km, recupero 2' camminando<br><b>1 km</b> defaticamento</p></div>
+  </div>
+
+  <h3>Core <em>3 giri</em></h3>
+  <div class="list">
+    <button class="ex"><span class="box">✓</span><span class="name">Crunch inverso</span><span class="sr">3×15</span><span class="meta">Solleva il bacino, non usare lo slancio delle gambe</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Mountain climber</span><span class="sr">3×30"</span><span class="meta">Spalle sopra le mani, ritmo sostenuto</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Russian twist</span><span class="sr">3×20</span><span class="meta">Con disco 5-10 kg quando diventa facile</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Plank con tocco spalla</span><span class="sr">3×20</span><span class="meta">Il bacino non deve oscillare</span></button>
+  </div>
+  <button class="reset" data-reset="g4">Azzera spunte di oggi</button>
+</section>
+
+<!-- G5 -->
+<section id="g5" role="tabpanel" hidden>
+  <div class="dayhead"><h2>Gambe + Addominali</h2><span class="kind lift">Sala</span></div>
+  <div class="vol"><span>Quadricipiti <b>10</b></span><span>Femorali <b>6</b></span><span>Polpacci <b>4</b></span><span>Core <b>6</b></span></div>
+
+  <h3>Quadricipiti <em>10 serie</em></h3>
+  <div class="list">
+    <button class="ex"><span class="box">✓</span><span class="name">Squat bilanciere</span><span class="sr">4×6-8</span><span class="meta">Rec <b>2-3'</b> · almeno al parallelo, ginocchia in linea con le punte</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Affondi camminati manubri</span><span class="sr">3×10/gamba</span><span class="meta">Rec <b>90"</b> · ottimo transfer per i sandbag lunges dell'Hyrox</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Leg press</span><span class="sr">3×10-12</span><span class="meta">Rec <b>90"</b> · non staccare il bacino dallo schienale in basso</span></button>
+  </div>
+
+  <h3>Femorali e glutei <em>6 serie</em></h3>
+  <div class="list">
+    <button class="ex"><span class="box">✓</span><span class="name">Stacco rumeno</span><span class="sr">3×8-10</span><span class="meta">Rec <b>2'</b> · anche indietro, schiena neutra, scendi fino a metà tibia</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Leg curl</span><span class="sr">3×12</span><span class="meta">Rec <b>60"</b> · fase negativa lenta</span></button>
+  </div>
+
+  <h3>Polpacci e core</h3>
+  <div class="list">
+    <button class="ex"><span class="box">✓</span><span class="name">Calf raise in piedi</span><span class="sr">4×12-15</span><span class="meta">Rec <b>60"</b> · pausa 1" in alto e in basso, protegge anche il tendine d'Achille per la corsa</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Ab wheel</span><span class="sr">3×10</span><span class="meta">Dalle ginocchia, fermati prima che la schiena si inarchi</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Plank laterale</span><span class="sr">3×30"/lato</span><span class="meta">Anche alte</span></button>
+  </div>
+  <div class="note"><p>Le gambe sono il giorno prima dell'Hyrox: allena la resistenza sotto fatica. Se il G6 crolla, porta lo squat a 3×8.</p></div>
+  <button class="reset" data-reset="g5">Azzera spunte di oggi</button>
+</section>
+
+<!-- G6 -->
+<section id="g6" role="tabpanel" hidden>
+  <div class="dayhead"><h2>Allenamento Hyrox</h2><span class="kind run">Ibrido</span></div>
+  <p class="sub">Circuito a ritmo sostenuto ma controllato: <b>4 giri</b>, nessuna pausa tra le stazioni, 2' tra i giri.</p>
+
+  <h3>Il circuito</h3>
+  <div class="list">
+    <button class="ex"><span class="box">✓</span><span class="name">Corsa</span><span class="sr">1 km</span><span class="meta">Ritmo gara previsto, non più veloce</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">SkiErg</span><span class="sr">250 m</span><span class="meta">Spinta da anche e addome, non solo braccia</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Sled push</span><span class="sr">25 m</span><span class="meta">Totale <b>~100 kg slitta inclusa</b> (circa 65% del peso gara uomo Open). Scegli un carico che spingi senza fermarti: le slitte in palestra hanno attriti molto diversi.</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Burpee broad jump</span><span class="sr">20 m</span><span class="meta">Salti lunghi e costanti, respira a terra</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Rowing</span><span class="sr">250 m</span><span class="meta">Gambe-busto-braccia, 24-28 colpi al minuto</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Farmer carry</span><span class="sr">50 m</span><span class="meta"><b>2 × 24 kg</b> (peso gara), passi corti e veloci</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Sandbag lunges</span><span class="sr">25 m</span><span class="meta"><b>15 kg</b> le prime 3 settimane, poi <b>20 kg</b> (peso gara). Sacco sulle spalle, ginocchio posteriore sfiora terra.</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Wall ball</span><span class="sr">25 rep</span><span class="meta"><b>6 kg</b> a bersaglio 3 m, squat completo a ogni ripetizione</span></button>
+  </div>
+
+  <h3>Pesi ufficiali di gara <em>Open, stagione attuale</em></h3>
+  <div class="tablewrap"><table>
+    <tr><th>Stazione</th><th>Uomo</th><th>Donna</th></tr>
+    <tr><td>Sled push 50 m</td><td>152 kg</td><td>102 kg</td></tr>
+    <tr><td>Sled pull 50 m</td><td>103 kg</td><td>78 kg</td></tr>
+    <tr><td>Farmer carry 200 m</td><td>2×24 kg</td><td>2×16 kg</td></tr>
+    <tr><td>Sandbag lunges 100 m</td><td>20 kg</td><td>10 kg</td></tr>
+    <tr><td>Wall ball</td><td>100 × 6 kg</td><td>75 × 4 kg</td></tr>
+  </table></div>
+  <div class="note run"><p>Il peso della slitta è incluso nel totale. Ogni <b>3ª settimana</b> fai una simulazione con 8 × 1 km e pesi di gara (puoi accorciare le stazioni a metà distanza).</p></div>
+  <button class="reset" data-reset="g6">Azzera spunte di oggi</button>
+</section>
+
+<!-- G7 -->
+<section id="g7" role="tabpanel" hidden>
+  <div class="dayhead"><h2>Recupero attivo</h2><span class="kind lift">Riposo</span></div>
+  <div class="list" style="margin-top:14px">
+    <button class="ex"><span class="box">✓</span><span class="name">Camminata</span><span class="sr">30-45'</span><span class="meta">Passo tranquillo, all'aperto se puoi</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Mobilità anche e caviglie</span><span class="sr">10'</span><span class="meta">90/90, affondo col ginocchio a terra, caviglia al muro</span></button>
+    <button class="ex"><span class="box">✓</span><span class="name">Stretching / foam roller</span><span class="sr">10-15'</span><span class="meta">Polpacci, quadricipiti, dorsali, petto</span></button>
+  </div>
+  <button class="reset" data-reset="g7">Azzera spunte di oggi</button>
+</section>
+
+<!-- CIBO -->
+<section id="food" role="tabpanel" hidden>
+  <div class="dayhead"><h2>Alimentazione</h2><span class="kind lift">Nutrizione</span></div>
+
+  <h3>I tuoi numeri</h3>
+  <div class="calc"><label for="kg">Il tuo peso</label><input id="kg" type="number" inputmode="decimal" min="40" max="160" value="75"><span>kg</span></div>
+  <div class="tablewrap" style="margin-top:8px"><table>
+    <tr><th>Nutriente</th><th>Regola</th><th>Per te</th></tr>
+    <tr><td>Proteine</td><td>1,8-2 g/kg ogni giorno</td><td><b id="pro"></b></td></tr>
+    <tr><td>Grassi</td><td>0,8-1 g/kg</td><td><b id="fat"></b></td></tr>
+    <tr><td>Carbo · giorni sala (G1, G3, G5)</td><td>3-4 g/kg</td><td><b id="cl"></b></td></tr>
+    <tr><td>Carbo · giorni corsa/Hyrox (G2, G4, G6)</td><td>5-6 g/kg</td><td><b id="ch"></b></td></tr>
+    <tr><td>Acqua</td><td>35 ml/kg + 0,5-0,75 l per ora di allenamento</td><td><b id="h2o"></b></td></tr>
+  </table></div>
+  <div class="note"><p><b>Come regolarti:</b> pesati 3 mattine a settimana e guarda la media. Per costruire muscolo senza ingrossarti punta a <b>+0,25% del peso a settimana</b>. Per definire, <b>−0,5% a settimana</b> tagliando prima i carbo dei giorni sala, mai le proteine.</p></div>
+
+  <h3>Giornata tipo <em>giorno corsa</em></h3>
+  <div class="list">
+    <div class="card"><h4>Colazione</h4><p>Porridge con 80 g fiocchi d'avena, latte o yogurt greco, 1 banana, miele. 2 uova o 30 g whey.</p></div>
+    <div class="card"><h4>Pre-allenamento (60-90')</h4><p>Pane bianco o gallette con marmellata, oppure 1 banana + caffè. Pochi grassi e fibre.</p></div>
+    <div class="card"><h4>Post-allenamento</h4><p>Entro 1-2 ore: 30-40 g proteine + carbo. Es. riso o pasta 100-120 g con pollo/tonno/salmone e verdure.</p></div>
+    <div class="card"><h4>Spuntino</h4><p>Yogurt greco o skyr con frutta e una manciata di frutta secca.</p></div>
+    <div class="card"><h4>Cena</h4><p>Patate o riso, pesce/carne/legumi, verdura abbondante, olio EVO a crudo.</p></div>
+  </div>
+  <p class="sub" style="margin-top:8px">Nei giorni sala riduci di circa un terzo pasta/riso/pane e aumenta la verdura.</p>
+
+  <h3>Cosa mettere nel carrello</h3>
+  <div class="grid2">
+    <div class="card"><h4>Proteine</h4><p>Pollo, tacchino, manzo magro, uova, salmone, tonno, merluzzo, yogurt greco, skyr, fiocchi di latte, legumi, tofu</p></div>
+    <div class="card"><h4>Carboidrati</h4><p>Avena, riso basmati, pasta, patate, patate dolci, pane, frutta (banane, frutti di bosco), datteri</p></div>
+    <div class="card"><h4>Grassi</h4><p>Olio EVO, avocado, noci, mandorle, semi di chia e lino, pesce azzurro</p></div>
+    <div class="card"><h4>Micronutrienti</h4><p>Spinaci, broccoli, peperoni, agrumi, kiwi, barbabietola (utile prima della corsa)</p></div>
+  </div>
+
+  <h3>Integratori</h3>
+  <div class="list">
+    <div class="card"><h4>Creatina monoidrato <span class="tag si">Sì</span></h4><p><b>3-5 g al giorno, sempre</b>, anche nei giorni di riposo, in qualsiasi momento. Aiuta forza e massa magra. Niente fase di carico.</p></div>
+    <div class="card"><h4>Proteine whey <span class="tag si">Sì</span></h4><p>Solo per arrivare al totale di proteine quando col cibo non ci riesci. 25-30 g per dose, comoda post-allenamento.</p></div>
+    <div class="card"><h4>Elettroliti / sali <span class="tag si">Sì</span></h4><p>Nelle corse oltre 60' e nell'Hyrox, soprattutto se sudi molto. Cerca prodotti con sodio (400-800 mg/l).</p></div>
+    <div class="card"><h4>Caffeina <span class="tag opt">Opzionale</span></h4><p><b>~3 mg/kg</b> 45' prima di run forte o Hyrox. Evitala nelle 8 ore prima di dormire.</p></div>
+    <div class="card"><h4>Vitamina D <span class="tag opt">Opzionale</span></h4><p>Solo se un esame del sangue mostra carenza: il medico ti indica la dose.</p></div>
+    <div class="card"><h4>Omega-3 <span class="tag opt">Opzionale</span></h4><p>Se mangi pesce grasso meno di 2 volte a settimana.</p></div>
+    <div class="card"><h4>BCAA, brucia-grassi <span class="tag no">Inutili</span></h4><p>Se raggiungi le proteine giornaliere, i BCAA non aggiungono nulla. I brucia-grassi non funzionano.</p></div>
+  </div>
+
+  <h3>Altro che fa la differenza</h3>
+  <ul class="plain">
+    <li><b>Sonno 7-8 ore</b>: con 6 allenamenti a settimana è il recupero numero uno.</li>
+    <li>Distribuisci le proteine su <b>4 pasti</b> da 30-40 g.</li>
+    <li>Alcol: limitalo, rallenta recupero e sintesi muscolare.</li>
+    <li>La sera prima della long run e dell'Hyrox: cena ricca di carboidrati.</li>
+  </ul>
+</section>
+
+<!-- REGOLE -->
+<section id="rules" role="tabpanel" hidden>
+  <div class="dayhead"><h2>Regole della scheda</h2></div>
+  <h3>Intensità</h3>
+  <ul class="plain">
+    <li>Fermati con <b>2 ripetizioni in riserva</b>: carico che finiresti con fatica ma senza cedere.</li>
+    <li>Massimo <b>10 serie per gruppo muscolare</b> a seduta.</li>
+    <li>Riscaldamento sempre: 5' cardio leggero, mobilità, 2 serie leggere sul primo esercizio.</li>
+  </ul>
+  <h3>Progressione</h3>
+  <ul class="plain">
+    <li>Quando fai il massimo delle ripetizioni su tutte le serie, aumenta il peso: <b>+2,5 kg</b> sui multiarticolari, <b>+1-2 kg</b> sui manubri.</li>
+    <li>Annota i pesi: se per 2 settimane non migliori, controlla sonno e cibo prima di cambiare esercizio.</li>
+  </ul>
+  <h3>Scarico</h3>
+  <ul class="plain">
+    <li>Ogni <b>4ª settimana</b>: stessi esercizi, carichi −30%, corsa −30%.</li>
+  </ul>
+  <h3>Segnali d'allarme</h3>
+  <ul class="plain">
+    <li>Dolore a tendini o articolazioni che peggiora correndo: taglia i km prima della sala.</li>
+    <li>Frequenza cardiaca a riposo più alta di 5+ battiti per più giorni: serve riposo.</li>
+  </ul>
+</section>
+
+<p class="fine">Indicazioni generali per adulti sani: non sostituiscono il parere di un medico o di un nutrizionista, da consultare in caso di patologie o farmaci.</p>
+</div>
+
+<script>
+(function(){
+  var store = {get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},
+               set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+  var tabs = document.querySelectorAll('.tab');
+  function show(id){
+    tabs.forEach(function(t){t.setAttribute('aria-selected', t.dataset.t===id ? 'true':'false')});
+    document.querySelectorAll('section[role=tabpanel]').forEach(function(s){s.hidden = s.id!==id});
+    store.set('scheda-tab', id);
+    var cur = document.getElementById('tab-'+id); if(cur && cur.scrollIntoView) cur.scrollIntoView({inline:'nearest',block:'nearest'});
+  }
+  tabs.forEach(function(t){t.addEventListener('click',function(){show(t.dataset.t); window.scrollTo(0,0)})});
+  var start = (location.hash||'').slice(1) || store.get('scheda-tab') || 'g1';
+  if(!document.getElementById(start)) start='g1';
+  show(start);
+
+  // spunte esercizi
+  document.querySelectorAll('section[role=tabpanel]').forEach(function(sec){
+    var exs = sec.querySelectorAll('button.ex');
+    var key = 'scheda-done-'+sec.id;
+    var saved = []; try{ saved = JSON.parse(store.get(key)||'[]') }catch(e){}
+    exs.forEach(function(ex,i){
+      if(saved.indexOf(i)>-1) ex.classList.add('done');
+      ex.setAttribute('aria-pressed', ex.classList.contains('done'));
+      ex.addEventListener('click',function(){
+        ex.classList.toggle('done'); ex.setAttribute('aria-pressed', ex.classList.contains('done'));
+        var d=[]; exs.forEach(function(e,j){if(e.classList.contains('done')) d.push(j)});
+        store.set(key, JSON.stringify(d));
+      });
+    });
+  });
+  document.querySelectorAll('[data-reset]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var id=b.dataset.reset;
+      document.querySelectorAll('#'+id+' button.ex').forEach(function(e){e.classList.remove('done');e.setAttribute('aria-pressed','false')});
+      store.set('scheda-done-'+id,'[]');
+    });
+  });
+
+  // calcolatore
+  var kg = document.getElementById('kg');
+  var sk = store.get('scheda-kg'); if(sk) kg.value = sk;
+  function r(n){return Math.round(n/5)*5}
+  function calc(){
+    var w = parseFloat(kg.value); if(!(w>=40 && w<=160)) return;
+    store.set('scheda-kg', w);
+    document.getElementById('pro').textContent = r(w*1.8)+'-'+r(w*2)+' g';
+    document.getElementById('fat').textContent = r(w*0.8)+'-'+r(w*1)+' g';
+    document.getElementById('cl').textContent = r(w*3)+'-'+r(w*4)+' g';
+    document.getElementById('ch').textContent = r(w*5)+'-'+r(w*6)+' g';
+    document.getElementById('h2o').textContent = '~'+(w*0.035).toFixed(1).replace('.',',')+' l + allenamento';
+  }
+  kg.addEventListener('input',calc); calc();
+})();
+</script>
+</body>
+</html>
